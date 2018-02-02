@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Babushka3</title>
+        <style>
+            .retContainer{
+                display:grid;
+                grid-template-columns:1fr 1fr 1fr;
+            }
+            @media only screen and (max-width: 1229px) {
+                .retContainer{grid-template-columns:1fr 1fr;}
+            }
+             @media only screen and (max-width: 830px) {
+             .ret img{width:100%}
+                .retContainer{grid-template-columns:1fr;}   
+            }
+            @media only screen and (max-width: 425px) {
+                .ret img{width:100%}
+                .retContainer{grid-template-columns:1fr;}
+            };
+            
+        
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Menu</h1>
+            <nav>
+                <button class="forretter">forretter</button><button class="hovedretter">hovedretter</button><button class="desserter">desserter</button><button class="drikkevarer">drikkevarer</button><button></button>
+            </nav>
+        </header>
+        <main class ="retContainer">  </main>
+        
+	   <template class = "retTemplate">
+            <article class = "ret">
+                <h2 class = "overskrift" data-navn >---</h2>
+                <img class = "billede" data-billede src = ".---" alt = "---">
+                <p class="kortBeskrivelse" data-kortbeskrivelse>---</p>
+                <p>Pris: <span class="pris" data-pris >---</span>, - </p>
+            </article>
+        </template>
+      
+        <footer></footer>
+        <script>
+            let retter = [];
+            document.addEventListener("DOMContentLoaded", hentJson);
+            
+            async function hentJson() {
+                let jsonData = await fetch("json/menu.json");
+                retter = await jsonData.json();
+                visRetter();
+            }
+            function visRetter(){
+                let temp = document.querySelector(".retTemplate");
+                let dest = document.querySelector(".retContainer");
+                retter.forEach(ret => {
+                    let klon = temp.cloneNode(true).content;
+                    klon.querySelector("[data-navn]").textContent = ret.navn;
+                    klon.querySelector("[data-billede]").src = "imgs/small/"+ret.billede+"-sm.jpg";
+                    klon.querySelector("[data-billede]").alt = "Billede af "+ret.navn;
+                    klon.querySelector("[data-kortbeskrivelse]").textContent = ret.kortbeskrivelse;
+                    klon.querySelector("[data-pris]").textContent = ret.pris;
+                    dest.appendChild(klon);
+                });
+            }
+        </script>
+
+    </body>
+</html>
