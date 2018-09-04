@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Babushka - opgave</title>
+	<style>
+		.retContainer {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			grid-gap: 10px;
+
+
+		}
+
+
+
+		.overskrift {
+			text-align: center;
+			font-family: kremlinregular;
+
+		}
+
+		.billede {
+			border-radius: 10px;
+			width: 100%;
+
+
+		}
+
+		article p {
+			text-align: center;
+			font-size: 1.3em;
+			font-family: kremlinregular;
+		}
+
+		body {
+			background-color: darkorange;
+			margin: 0;
+		}
+
+		header {
+			background-color: orangered;
+		}
+
+		button {
+			background-color: orange;
+			border-radius: 10px;
+			padding-left: 10px;
+			font-family: kremlinregular;
+		}
+
+		nav {
+			text-align: center;
+		}
+
+		h1 {
+			text-transform: capitalize;
+			text-align: center;
+			font-family: kremlinregular;
+			padding: 10px;
+		}
+
+		.ret:nth-child(odd) {
+			background-color: #ff9029;
+		}
+
+		.ret {
+			border-radius: 10px;
+			padding: 10px;
+		}
+
+		@font-face {
+			font-family: 'kremlinregular';
+			src: url('kremlin-webfont.woff2') format('woff2'),
+			url('kremlin-webfont.woff') format('woff');
+			font-weight: normal;
+			font-style: normal;
+
+		}
+
+
+
+		@media only screen and (max-width: 1229px) {
+			.retContainer {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		@media only screen and (max-width: 830px) {
+			.ret img {
+				width: 100%
+			}
+			.retContainer {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		@media only screen and (max-width: 425px) {
+			.ret img {
+				width: 100%
+			}
+			.retContainer {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		article.ret img:hover {
+			transform: scale(1.1);
+		}
+
+		#modal {
+			width: 100vw;
+			height: 100vh;
+			background-color: rgba(0, 0, 0, .5);
+			position: fixed;
+			text-align: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: 1s;
+			margin: 0;
+			padding: 0;
+			top: 0;
+		}
+
+		#modalContent {
+			width: 70vw;
+			height: 90vh;
+			margin: auto;
+			background-color: grey;
+		}
+
+		#modal h2 {
+			padding: 10px;
+		}
+
+		#modal img {
+			width: 50%;
+
+		}
+
+		#modal.show {
+			opacity: 1;
+			pointer-events: all;
+			transition: 0.5s;
+		}
+
+		#modal button {
+			height: 50px;
+			width: 100px;
+			padding: 10px;
+		}
+
+		.langBeskrivelse {
+			text-align: center;
+			width: 50%;
+			margin: auto;
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<h1></h1>
+
+	</header>
+	<main class="retContainer">
+		<h2 class="overskrift" data-navn>---</h2>
+		<img class="billede" data-billede src=".---" alt="---">
+		<p class="kortBeskrivelse" data-kortbeskrivelse>---</p>
+		<p class="langBeskrivelse" data-langbeskrivelse>---</p>
+		<p>Oprindelsesregion: <span class="oprindelsesregion" data-oprindelsesregion></span></p>
+		<p>Pris: <span class="pris" data-pris>---</span>, - </p>
+	</main>
+
+
+
+	<footer></footer>
+
+	<script>
+		let urlParams = new URLSearchParams(window.location.search);
+		let id = urlParams.get("id");
+		console.log(id);
+
+
+		document.addEventListener("DOMContentLoaded", hentJson);
+
+		let dest = document.querySelector(".retContainer"),
+			retter, retFilter = "alle";
+		let audio = new Audio("russia.mp4");
+
+
+
+
+		async function hentJson() {
+			let jsonData = await fetch("json/menu.json");
+			retter = await jsonData.json();
+			visRetter();
+
+
+		}
+
+		document.querySelectorAll(".menu-item").forEach(knap => {
+			knap.addEventListener("click", filtrering);
+
+
+
+		})
+
+		function filtrering() {
+			dest.textContent = "";
+			retFilter = this.getAttribute("data-kategori");
+			visRetter();
+			audio.play();
+			console.log("Filter");
+
+		}
+
+
+		function visRetter() {
+
+			let dest = document.querySelector(".retContainer");
+
+
+			document.querySelector("header h1").textContent = retFilter;
+
+			retter.forEach(ret => {
+				if (ret.id == id) {
+
+
+					dest.querySelector("[data-navn]").textContent = ret.navn;
+					dest.querySelector("[data-billede]").src = "imgs/small/" + ret.billede + "-sm.jpg";
+
+					dest.querySelector("[data-billede]").addEventListener("click", () => {
+						window.location.href = "singleView.html?id=" + ret.id;
+					})
+					dest.querySelector("[data-billede]").alt = "Billede af " + ret.navn;
+					dest.querySelector("[data-kortbeskrivelse]").textContent = ret.kortbeskrivelse;
+					dest.querySelector("[data-pris]").textContent = ret.pris;
+					dest.querySelector("[data-langbeskrivelse]").textContent = ret.langbeskrivelse;
+					dest.querySelector("[data-oprindelsesregion]").textContent = ret.oprindelsesregion;
+
+				}
+			})
+		}
+	</script>
+
+</body>
+
+</html>
